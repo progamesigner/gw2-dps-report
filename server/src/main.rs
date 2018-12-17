@@ -10,21 +10,22 @@ use mktemp::Temp;
 use std::env;
 use std::fs::File;
 use std::io::{Error, Read, Write};
+use std::path::Path;
 use std::process::{Command, Stdio};
 
 type ResponseFuture = Box<Future<Item = Response<Body>, Error = hyper::Error> + Send>;
 
-fn html_file_body(filename: &str) -> Result<Body, Error> {
+fn static_file_body(filename: &str) -> Result<Body, Error> {
     let path = format!(
         "{}/{}",
-        env::var("UPLOAD_TEMPLATE_PATH").unwrap_or("res".to_string()),
+        env::var("SERVER_FILE_PATH").unwrap_or("res".to_string()),
         filename
     );
 
-    let mut data = String::new();
-    let mut file = File::open(path).expect(&format!("Template {} not found", filename));
+    let mut data = Vec::new();
+    let mut file = File::open(path).expect(&format!("File {} not found", filename));
 
-    match file.read_to_string(&mut data) {
+    match file.read_to_end(&mut data) {
         Ok(_) => Ok(Body::from(data)),
         Err(error) => Err(error),
     }
@@ -52,7 +53,7 @@ fn response_not_found() -> Response<Body> {
     Response::builder()
         .header("Content-Type", "text/html")
         .status(StatusCode::NOT_FOUND)
-        .body(html_file_body("404.html").unwrap())
+        .body(static_file_body("404.html").unwrap())
         .unwrap()
 }
 
@@ -73,7 +74,7 @@ fn response_server_error(message: &str) -> Response<Body> {
 }
 
 fn index(_: Request<Body>) -> ResponseFuture {
-    match html_file_body("index.html") {
+    match static_file_body("index.html") {
         Ok(body) => Box::new(future::ok(
             Response::builder()
                 .header("Content-Type", "text/html")
@@ -162,14 +163,37 @@ fn upload(request: Request<Body>) -> ResponseFuture {
 }
 
 fn serve(request: Request<Body>) -> ResponseFuture {
-    match evtc_file_body(&request.uri().path()[1..]) {
+    let path = Path::new(&request.uri().path()[1..]);
+
+    match evtc_file_body(path.to_str().unwrap()) {
         Ok(body) => Box::new(future::ok(
             Response::builder()
                 .header("Content-Type", "text/html")
                 .body(body)
                 .unwrap(),
         )),
-        Err(_) => Box::new(future::ok(response_not_found())),
+        Err(_) => match static_file_body(path.to_str().unwrap()) {
+            Ok(body) => Box::new(future::ok(
+                Response::builder()
+                    .header(
+                        "Content-Type",
+                        match path.extension() {
+                            Some(extension) => match extension.to_str() {
+                                Some("css") => "text/css",
+                                Some("html") => "text/html",
+                                Some("js") => "text/javascript",
+                                Some("json") => "application/json",
+                                Some("png") => "image/png",
+                                _ => "plain/text",
+                            },
+                            _ => "plain/text",
+                        },
+                    )
+                    .body(body)
+                    .unwrap(),
+            )),
+            Err(_) => Box::new(future::ok(response_not_found())),
+        },
     }
 }
 
