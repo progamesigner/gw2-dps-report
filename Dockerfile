@@ -1,18 +1,17 @@
 FROM rust:1.31 AS server
 
-RUN USER=root cargo new --bin --name server /build
+RUN USER=root cargo new --bin --name gw2-dps-report /build
 
 WORKDIR /build
 
-COPY server/Cargo.lock Cargo.lock
-COPY server/Cargo.toml Cargo.toml
+COPY Cargo.* ./
 
 RUN cargo build --release && \
     rm src/*.rs
 
-COPY server/ /build/
+COPY src/ ./src/
 
-RUN rm target/release/deps/server* && \
+RUN rm ./target/release/deps/gw2* && \
     cargo build --release
 
 FROM alpine AS jq
@@ -40,15 +39,15 @@ RUN apk update && \
 
 WORKDIR /build
 
-RUN curl -o /build/GW2EI.zip -L https://github.com/baaron4/GW2-Elite-Insights-Parser/releases/download/v${ELITE_INSIGHTS_VERSION}/GW2EI.zip && \
-    unzip /build/GW2EI.zip && \
-    rm -rf /build/GW2EI.zip
+RUN curl -o ./GW2EI.zip -L https://github.com/baaron4/GW2-Elite-Insights-Parser/releases/download/v${ELITE_INSIGHTS_VERSION}/GW2EI.zip && \
+    unzip ./GW2EI.zip && \
+    rm -rf ./GW2EI.zip
 
 FROM mono:5
 
 ENV EVTC_PARSER_PATH=/bin/parser
 ENV FILE_BASE_PATH=/files
-ENV SERVER_FILE_PATH=/srv/server
+ENV SERVER_FILE_PATH=/srv/gw2-dps-report
 ENV SERVER_LISTEN_ADDR=0.0.0.0
 ENV SERVER_LISTEN_PORT=80
 
@@ -56,8 +55,8 @@ WORKDIR /GW2EI
 
 COPY --from=jq /bin/jq /bin/jq
 COPY --from=parser /build /GW2EI
-COPY --from=server /build/target/release/server /bin/server
-COPY --from=server /build/res/ /srv/server/
+COPY --from=server /build/target/release/gw2-dps-report /bin/gw2-dps-report
+COPY res/ /srv/gw2-dps-report/
 COPY settings.conf /GW2EI/settings.conf
 COPY parser.sh /bin/parser
 
@@ -65,4 +64,4 @@ VOLUME ["/files"]
 
 EXPOSE 80
 
-ENTRYPOINT ["/bin/server"]
+ENTRYPOINT ["/bin/gw2-dps-report"]

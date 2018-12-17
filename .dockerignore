@@ -1,2 +1,2 @@
-server/target
-server/**/*.rs.bk
+target
+**/*.rs.bk
