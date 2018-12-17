@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/basic.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/dropzone.css">
     <link rel="stylesheet" href="app.css">
 </head>
 
@@ -34,7 +36,9 @@
                         <div class="field">
                             <label class="label">Files</label>
                             <div class="control">
-                                <div id="dropzone" class="files"></div>
+                                <div id="dropzone" class="files dropzone dz-clickable">
+                                    <div class="dz-message">Drop files here or click to upload.</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -62,7 +66,7 @@
                                     <p>Upload your .evtc, .evtc.zip, or .zevtc file.</p>
                                 </li>
                                 <li>
-                                    <p>That's all. Generated URL would be sent to <a class="link is-info" href="https://discord.gg/xsSWwn3">Discord</a>.</p>
+                                    <p>That's all. Generated URL would be sent to our <a class="link is-info" href="https://discord.gg/xsSWwn3" rel="external">Discord</a>.</p>
                                 </li>
                             </ul>
                             <div class="has-text-centered">
@@ -79,6 +83,10 @@
                         <div class="content">
                             <ul>
                                 <li>
+                                    <time datetime="2018-12-17">2018-12-17</time>
+                                    <p>Publish to <a class="link is-info" href="https://github.com/progamesigner/gw2-dps-report" rel="external">GitHub</a> and redesign dropzone.</p>
+                                </li>
+                                <li>
                                     <time datetime="2018-12-16">2018-12-16</time>
                                     <p>Rewrite server handler and restyle this page.</p>
                                 </li>
@@ -93,16 +101,16 @@
                         <h3 class="title is-4">Questions</h3>
                         <div class="content">
                             <p>
-                                This is a private service to upload arcdps logs, generate reports by <a class="link is-info" href="https://github.com/baaron4/GW2-Elite-Insights-Parser">Elite Insights</a>, and send to our <a class="link is-info" href="https://discord.gg/xsSWwn3">Discord</a>.
+                                This is a private service to upload arcdps logs, generate reports by <a class="link is-info" href="https://github.com/baaron4/GW2-Elite-Insights-Parser" rel="external">Elite Insights</a>, and send to our <a class="link is-info" href="https://discord.gg/xsSWwn3">Discord</a>.
                             </p>
-                            <p>The source code can be found on <a class="link is-info" href="https://github.com/progamesigner/gw2-dps-report">GitHub</a>. PRs are welcome.</p>
+                            <p>The source code can be found on <a class="link is-info" href="https://github.com/progamesigner/gw2-dps-report" rel="external">GitHub</a>. PRs are welcome.</p>
                             <p>
                                 <ul>
-                                    <li>A simple HTTP server and written by <a class="link is-info" href="http://rust-lang.org">Rust</a>.</li>
-                                    <li>A parser script which invokes <a class="link is-info" href="https://github.com/baaron4/GW2-Elite-Insights-Parser">Elite Insights</a> and send reports to webhooks by <a class="link is-info" href="http://curl.haxx.se">cURL</a>.</li>
-                                    <li>A simple HTML pages which use <a class="link is-info" href="https://bulma.io">Bulma</a> and <a class="link is-info" href="https://www.dropzonejs.com">DropzoneJS</a>.</li>
-                                    <li>A <a class="link is-info" href="https://www.docker.com">Docker</a> image that runs above programs and serve HTTP endpoints.</li>
-                                    <li>All static files are served by <a class="link is-info" href="https://cdnjs.com">cdnjs</a> and <a class="link is-info" href="https://www.cloudflare.com">Cloudflare</a>.</li>
+                                    <li>A simple HTTP server and written by <a class="link is-info" href="http://rust-lang.org" rel="external">Rust</a>.</li>
+                                    <li>A parser script which invokes <a class="link is-info" href="https://github.com/baaron4/GW2-Elite-Insights-Parser" rel="external">Elite Insights</a> and send reports to webhooks by <a class="link is-info" href="http://curl.haxx.se" rel="external">cURL</a>.</li>
+                                    <li>A simple HTML pages which use <a class="link is-info" href="https://bulma.io" rel="external">Bulma</a> and <a class="link is-info" href="https://www.dropzonejs.com" rel="external">DropzoneJS</a>.</li>
+                                    <li>A <a class="link is-info" href="https://www.docker.com" rel="external">Dockerfile</a> can be used to deploy above programs and serve HTTP endpoints.</li>
+                                    <li>All static files are served by <a class="link is-info" href="https://cdnjs.com" rel="external">cdnjs</a> and <a class="link is-info" href="https://www.cloudflare.com" rel="external">Cloudflare</a>.</li>
                                 </ul>
                             </p>
                         </div>
@@ -112,20 +120,20 @@
         </main>
         <footer class="footer">
             <div class="content has-text-centered">
-                <p>This site is hosted by [Rush] YangJieShiou.3859 (<a href="https://progamesigner.com">Yang Sheng Han</a>).</p>
+                <p>This site is hosted by [Rush] YangJieShiou.3859 (<a class="link is-info" href="https://progamesigner.com" rel="external">Yang Sheng Han</a>).</p>
                 <p>
                     This fan made and maintained website has no connection to ArenaNet, NCSoft, Guild Wars 2 or its staff.<br>Reports generated by this tool include images and assets that are &copy; ArenaNet, Inc.
                 </p>
                 <div class="container">
                     <nav class="level">
                         <p class="level-item has-text-centered">
-                            <a class="link is-info" href="https://github.com/progamesigner/gw2-dps-report">GitHub</a>
+                            <a class="link is-info" href="https://github.com/progamesigner/gw2-dps-report" rel="external">GitHub</a>
                         </p>
                         <p class="level-item has-text-centered">
-                            <a class="link is-info" href="https://discord.gg/xsSWwn3">Discord</a>
+                            <a class="link is-info" href="https://discord.gg/xsSWwn3" rel="external">Discord</a>
                         </p>
                         <p class="level-item has-text-centered">
-                            <a class="link is-info" href="https://paypal.com">Donate</a>
+                            <a class="link is-info" href="https://buymeacoff.ee/progamesigner" rel="external">Donate</a>
                         </p>
                     </nav>
                 </div>
