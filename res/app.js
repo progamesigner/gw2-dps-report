@@ -20,4 +20,12 @@
             url: '/upload'
         }
     );
+
+    document.querySelectorAll('a[rel="external"]').forEach(function (element) {
+        element.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            window.open(element.getAttribute('href'));
+        });
+    });
 })(window);
