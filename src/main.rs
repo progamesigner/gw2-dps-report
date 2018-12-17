@@ -3,12 +3,13 @@ extern crate hyper;
 extern crate mktemp;
 
 use futures::future;
+use hyper::header::HeaderValue;
 use hyper::rt::{self, Future, Stream};
 use hyper::service::service_fn;
 use hyper::{Body, Method, Request, Response, Server, StatusCode};
 use mktemp::Temp;
 use std::env;
-use std::fs::File;
+use std::fs::{self, File};
 use std::io::{Error, Read, Write};
 use std::path::Path;
 use std::process::{Command, Stdio};
@@ -88,8 +89,8 @@ fn index(_: Request<Body>) -> ResponseFuture {
 fn upload(request: Request<Body>) -> ResponseFuture {
     let (parts, body) = request.into_parts();
 
-    let token = env::var("UPLOAD_ACCESS_TOKEN")
-        .expect("Required environment variable: UPLOAD_ACCESS_TOKEN");
+    let empty = HeaderValue::from_static("");
+    let token = env::var("UPLOAD_ACCESS_TOKEN").unwrap_or("".to_string());
 
     let base = env::var("DPS_BASE_URL").unwrap_or(format!(
         "http://{}:{}",
@@ -101,62 +102,70 @@ fn upload(request: Request<Body>) -> ResponseFuture {
         == parts
             .headers
             .get("X-ACCESS-TOKEN")
-            .unwrap()
+            .unwrap_or(&empty)
             .to_str()
             .unwrap()
     {
-        Box::new(body.concat2().map(move |evtc| {
-            let filename = parts
-                .headers
-                .get("X-EVTC-FILENAME")
-                .expect("Required header: X-EVTC-FILENAME")
-                .to_str()
-                .unwrap();
-            let temp = Temp::new_dir().expect("Failed to create temporary directory");
-            let path = format!("{}/{}", temp.to_path_buf().to_str().unwrap(), filename);
+        Box::new(
+            body.concat2()
+                .map(move |evtc| match parts.headers.get("X-EVTC-FILENAME") {
+                    Some(filename) => {
+                        let name = filename.to_str().unwrap();
+                        let temp = Temp::new_dir().expect("Failed to create temporary directory");
+                        let path = format!("{}/{}", temp.to_path_buf().to_str().unwrap(), name);
 
-            let mut file = File::create(path.clone()).unwrap();
-            let mut command =
-                Command::new(env::var("EVTC_PARSER_PATH").unwrap_or("/bin/parser".to_string()));
+                        let mut file = File::create(path.clone()).unwrap();
+                        let mut command = Command::new(
+                            fs::canonicalize(
+                                env::var("EVTC_PARSER_PATH").unwrap_or("/bin/parser".to_string()),
+                            )
+                            .unwrap(),
+                        );
 
-            command
-                .arg(path.clone())
-                .arg(filename)
-                .stdout(Stdio::inherit())
-                .stderr(Stdio::inherit());
+                        command
+                            .arg(path.clone())
+                            .arg(name)
+                            .stdout(Stdio::inherit())
+                            .stderr(Stdio::inherit());
 
-            file.write_all(&evtc)
-                .expect("Failed to write temporary file");
-            file.sync_all().expect("Failed to sync temporary file");
+                        file.write_all(&evtc)
+                            .expect("Failed to write temporary file");
+                        file.sync_all().expect("Failed to sync temporary file");
 
-            if command
-                .spawn()
-                .expect("Failed to execute parser")
-                .wait()
-                .expect("Failed to determine parser exit status")
-                .success()
-            {
-                match File::open(format!("{}/data.txt", temp.to_path_buf().to_str().unwrap())) {
-                    Ok(mut data) => {
-                        let mut name = String::new();
-                        match data.read_to_string(&mut name) {
-                            Ok(_) => Response::builder()
-                                .header("Content-Type", "application/json")
-                                .body(Body::from(format!(
-                                    "{{\"url \": \"{}/{}\"}}",
-                                    base,
-                                    name.trim()
-                                )))
-                                .unwrap(),
-                            Err(_) => response_server_error("Empty result"),
+                        if command
+                            .spawn()
+                            .expect("Failed to execute parser")
+                            .wait()
+                            .expect("Failed to determine parser exit status")
+                            .success()
+                        {
+                            match File::open(format!(
+                                "{}/data.txt",
+                                temp.to_path_buf().to_str().unwrap()
+                            )) {
+                                Ok(mut data) => {
+                                    let mut name = String::new();
+                                    match data.read_to_string(&mut name) {
+                                        Ok(_) => Response::builder()
+                                            .header("Content-Type", "application/json")
+                                            .body(Body::from(format!(
+                                                "{{\"url \": \"{}/{}\"}}",
+                                                base,
+                                                name.trim()
+                                            )))
+                                            .unwrap(),
+                                        Err(_) => response_server_error("Empty result"),
+                                    }
+                                }
+                                Err(_) => response_server_error("Parsing error"),
+                            }
+                        } else {
+                            response_server_error("Parser error")
                         }
                     }
-                    Err(_) => response_server_error("Parsing error"),
-                }
-            } else {
-                response_server_error("Parser error")
-            }
-        }))
+                    None => response_server_error("X-EVTC-FILENAME header is required"),
+                }),
+        )
     } else {
         Box::new(future::ok(response_not_authorized()))
     }
@@ -184,9 +193,9 @@ fn serve(request: Request<Body>) -> ResponseFuture {
                                 Some("js") => "text/javascript",
                                 Some("json") => "application/json",
                                 Some("png") => "image/png",
-                                _ => "plain/text",
+                                _ => "text/plain",
                             },
-                            _ => "plain/text",
+                            _ => "text/plain",
                         },
                     )
                     .body(body)
