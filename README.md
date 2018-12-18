@@ -37,8 +37,12 @@ docker exec gw2-dps-report gw2-dps-clean
 ### Built With
 
  * [Rust](https://www.rust-lang.org)
+    * [futures](http://rust-lang-nursery.github.io/futures-rs)
+    * [hyper](https://hyper.rs)
+    * [mktemp](https://crates.io/crates/mktemp)
  * [Docker](https://www.docker.com)
  * [Elite Insights](https://github.com/baaron4/GW2-Elite-Insights-Parser)
+    * [arcdps](https://www.deltaconnected.com/arcdps)
  * [Bulma](https://bulma.io)
  * [DropzoneJS](https://www.dropzonejs.com)
 
