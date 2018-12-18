@@ -39,10 +39,10 @@ fn evtc_file_body(filename: &str) -> Result<Body, Error> {
         filename
     );
 
-    let mut data = String::new();
+    let mut data = Vec::new();
 
     match File::open(path) {
-        Ok(mut file) => match file.read_to_string(&mut data) {
+        Ok(mut file) => match file.read_to_end(&mut data) {
             Ok(_) => Ok(Body::from(data)),
             Err(error) => Err(error),
         },
@@ -92,12 +92,6 @@ fn upload(request: Request<Body>) -> ResponseFuture {
     let empty = HeaderValue::from_static("");
     let token = env::var("UPLOAD_ACCESS_TOKEN").unwrap_or("".to_string());
 
-    let base = env::var("DPS_BASE_URL").unwrap_or(format!(
-        "http://{}:{}",
-        env::var("SERVER_LISTEN_ADDR").unwrap_or("127.0.0.1".to_string()),
-        env::var("SERVER_LISTEN_PORT").unwrap_or("3000".to_string())
-    ));
-
     if token
         == parts
             .headers
@@ -139,25 +133,20 @@ fn upload(request: Request<Body>) -> ResponseFuture {
                             .expect("Failed to determine parser exit status")
                             .success()
                         {
-                            match File::open(format!(
-                                "{}/data.txt",
-                                temp.to_path_buf().to_str().unwrap()
-                            )) {
-                                Ok(mut data) => {
-                                    let mut name = String::new();
-                                    match data.read_to_string(&mut name) {
-                                        Ok(_) => Response::builder()
-                                            .header("Content-Type", "application/json")
-                                            .body(Body::from(format!(
-                                                "{{\"url \": \"{}/{}\"}}",
-                                                base,
-                                                name.trim()
-                                            )))
-                                            .unwrap(),
-                                        Err(_) => response_server_error("Empty result"),
-                                    }
-                                }
-                                Err(_) => response_server_error("Parsing error"),
+                            let path =
+                                format!("{}/data.json", temp.to_path_buf().to_str().unwrap());
+
+                            let mut data = Vec::new();
+
+                            match File::open(path) {
+                                Ok(mut file) => match file.read_to_end(&mut data) {
+                                    Ok(_) => Response::builder()
+                                        .header("Content-Type", "application/json")
+                                        .body(Body::from(data))
+                                        .unwrap(),
+                                    Err(_) => response_server_error("Unexpected parsing error"),
+                                },
+                                Err(_) => response_server_error("Empty result"),
                             }
                         } else {
                             response_server_error("Parser error")
@@ -169,6 +158,10 @@ fn upload(request: Request<Body>) -> ResponseFuture {
     } else {
         Box::new(future::ok(response_not_authorized()))
     }
+}
+
+fn cors(_: Request<Body>) -> ResponseFuture {
+    Box::new(future::ok(Response::builder().body(Body::empty()).unwrap()))
 }
 
 fn serve(request: Request<Body>) -> ResponseFuture {
@@ -210,6 +203,7 @@ fn dispatcher(request: Request<Body>) -> ResponseFuture {
     match (request.method(), request.uri().path()) {
         (&Method::GET, "/") | (&Method::GET, "/index.html") => index(request),
         (&Method::PUT, "/upload") => upload(request),
+        (&Method::OPTIONS, "/upload") => cors(request),
         _ => serve(request),
     }
 }

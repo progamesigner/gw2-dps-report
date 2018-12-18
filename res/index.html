@@ -34,6 +34,18 @@
                             </div>
                         </div>
                         <div class="field">
+                            <label class="label">Discord Webhook URL</label>
+
+                            <div class="field has-addons">
+                                <p class="control">
+                                    <a class="button is-static">https://discordapp.com/api/webhooks/</a>
+                                </p>
+                                <p class="control is-expanded">
+                                    <input class="input" type="text" name="webhook" placeholder="Discord Webhook URL">
+                                </p>
+                            </div>
+                        </div>
+                        <div class="field">
                             <label class="label">Files</label>
                             <div class="control">
                                 <div id="dropzone" class="files dropzone dz-clickable">
@@ -50,14 +62,13 @@
                                     <p>Get latest token from us.</p>
                                 </li>
                                 <li>
-                                    <p>
-                                        Enable "Save EVTC logs after encounters" option in arcdps.<br>
-                                        <span class="has-text-grey">Use <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>H</kbd> to show arcdps.</span><br>
-                                        <span class="has-text-grey">Use <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>T</kbd> to shot option window.</span>
-                                    </p>
+                                    <p>Get a <a class="link is-info" href="https://discordapp.com/developers/docs/resources/webhook" rel="external">Discord Webhook</a> URL.</p>
                                 </li>
                                 <li>
                                     <p>
+                                        Enable "Save EVTC logs after encounters" option in arcdps.<br>
+                                        <span class="has-text-grey">Use <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>H</kbd> to show arcdps.</span><br>
+                                        <span class="has-text-grey">Use <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>T</kbd> to shot option window.</span><br>
                                         Enable "Compress logs with PowerShell (Win10)" option in arcdps if possible.<br>
                                         <span class="has-text-grey">This requires Windows&copy; 10.</span>
                                     </p>
@@ -69,7 +80,7 @@
                                     </p>
                                 </li>
                                 <li>
-                                    <p>That's all. Generated URL would be sent to our <a class="link is-info" href="https://discord.gg/xsSWwn3" rel="external">Discord</a>.</p>
+                                    <p>That's all. A message would be sent to your <a class="link is-info" href="https://discordapp.com/" rel="external">Discord</a> channel via webhook.</p>
                                 </li>
                             </ul>
                             <div class="has-text-centered">
@@ -85,6 +96,10 @@
                         <h3 class="title is-4">Updates</h3>
                         <div class="content">
                             <ul>
+                                <li>
+                                    <time datetime="2018-12-18">2018-12-18</time>
+                                    <p>Rework so that webhook requests are issued via client instead of server.</p>
+                                </li>
                                 <li>
                                     <time datetime="2018-12-17">2018-12-17</time>
                                     <p>Publish to <a class="link is-info" href="https://github.com/progamesigner/gw2-dps-report" rel="external">GitHub</a> and redesign dropzone.</p>
@@ -104,7 +119,10 @@
                         <h3 class="title is-4">Questions</h3>
                         <div class="content">
                             <p>
-                                This is a private service to upload arcdps logs, generate reports by <a class="link is-info" href="https://github.com/baaron4/GW2-Elite-Insights-Parser" rel="external">Elite Insights</a>, and send to our <a class="link is-info" href="https://discord.gg/xsSWwn3">Discord</a>.
+                                This is a private service to upload arcdps logs, generate reports by <a class="link is-info" href="https://github.com/baaron4/GW2-Elite-Insights-Parser" rel="external">Elite Insights</a>, and send to your <a class="link is-info" href="https://discordapp.com/" rel="external">Discord</a> channel via webhook. I will try to make generated reports live as long as possible, but there is no guarantee.
+                            </p>
+                            <p>
+                                Server stores only generated files. Webhook URLs are used in your browser and thus server is not aware of that.<br>
                             </p>
                             <p>The source code can be found on <a class="link is-info" href="https://github.com/progamesigner/gw2-dps-report" rel="external">GitHub</a>. PRs are welcome.</p>
                             <p>
@@ -125,7 +143,8 @@
             <div class="content has-text-centered">
                 <p>This site is hosted by [Rush] YangJieShiou.3859 (<a class="link is-info" href="https://progamesigner.com" rel="external">Yang Sheng Han</a>).</p>
                 <p>
-                    This fan made and maintained website has no connection to ArenaNet, NCSoft, Guild Wars 2 or its staff.<br>Reports generated by this tool include images and assets that are &copy; ArenaNet, Inc.
+                    This fan made and maintained website has no connection to ArenaNet, NCSoft, Guild Wars 2 or its staff.<br>
+                    Reports generated by this tool include images and assets that are &copy; ArenaNet, Inc.
                 </p>
                 <div class="container">
                     <nav class="level">

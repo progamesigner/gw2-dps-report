@@ -25,7 +25,6 @@ Deploy service with Docker.
 ```
 docker build -t gw2-dps-report .
 docker run -d \
-    -e DISCORD_WEBHOOK_URLS=<DISCORD_WEBHOOK_URL> \
     -e UPLOAD_ACCESS_TOKEN=<YOUR_SECRET_TOKEN> \
     gw2-dps-report
 ```
