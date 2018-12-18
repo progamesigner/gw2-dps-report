@@ -13,7 +13,7 @@ Upload arcdps logs and send to Discord automatically.
 Cargo makes everything simple.
 
 ```
-cargo run
+cargo run --bin gw2-dps-report
 ```
 
 Cargo would install dependencies, build debug executable, and the server is up.
@@ -29,10 +29,15 @@ docker run -d \
     gw2-dps-report
 ```
 
+Clean files generated 14 days ago.
+```
+docker exec gw2-dps-report gw2-dps-clean
+```
+
 ### Built With
 
- * [Rust](https://www.rust-lang.org/)
- * [Docker](https://www.docker.com/)
+ * [Rust](https://www.rust-lang.org)
+ * [Docker](https://www.docker.com)
  * [Elite Insights](https://github.com/baaron4/GW2-Elite-Insights-Parser)
  * [Bulma](https://bulma.io)
  * [DropzoneJS](https://www.dropzonejs.com)
