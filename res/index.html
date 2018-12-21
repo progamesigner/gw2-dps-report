@@ -38,7 +38,12 @@
 
                             <div class="field has-addons">
                                 <p class="control">
-                                    <a class="button is-static">https://discordapp.com/api/webhooks/</a>
+                                    <div class="select">
+                                        <select name="type">
+                                            <option disabled>Webhook</option>
+                                            <option value="discord">Discord</option>
+                                        </select>
+                                    </div>
                                 </p>
                                 <p class="control is-expanded">
                                     <input class="input" type="text" name="webhook" placeholder="Discord Webhook URL">

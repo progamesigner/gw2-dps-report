@@ -25,7 +25,7 @@
                     webhook.disabled = true;
                     webhook.parentNode.classList.add('is-loading');
 
-                    xhr.open('POST', 'https://discordapp.com/api/webhooks/' + webhook.value);
+                    xhr.open('POST', webhook.value);
                     xhr.setRequestHeader('Content-Type', 'application/json');
                     xhr.onreadystatechange = function () {
                         webhook.disabled = false;
