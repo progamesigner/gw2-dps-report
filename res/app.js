@@ -4,6 +4,28 @@
     var token = document.querySelector('[name="token"]');
     var webhook = document.querySelector('[name="webhook"]');
 
+    try {
+        var storage = window.localStorage;
+
+        var handler = function (key) {
+            return function (event) {
+                var value = event.currentTarget.value;
+                if (value) {
+                    storage.setItem(key, value);
+                } else {
+                    storage.removeItem(key);
+                }
+            }
+        };
+
+        token.value = storage.getItem('token');
+        webhook.value = storage.getItem('discord_webhook');
+        token.addEventListener('change', handler('token'));
+        webhook.addEventListener('change', handler('discord_webhook'));
+    } catch (error) {
+        console.error(error);
+    }
+
     new Dropzone(
         document.getElementById('dropzone'),
         {
