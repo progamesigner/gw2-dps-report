@@ -183,9 +183,11 @@ fn serve(request: Request<Body>) -> ResponseFuture {
                             Some(extension) => match extension.to_str() {
                                 Some("css") => "text/css",
                                 Some("html") => "text/html",
+                                Some("ico") => "image/x-icon",
                                 Some("js") => "text/javascript",
                                 Some("json") => "application/json",
                                 Some("png") => "image/png",
+                                Some("svg") => "image/svg+xml",
                                 _ => "text/plain",
                             },
                             _ => "text/plain",
