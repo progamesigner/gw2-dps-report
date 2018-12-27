@@ -24,10 +24,12 @@ fn static_file_body(filename: &str) -> Result<Body, Error> {
     );
 
     let mut data = Vec::new();
-    let mut file = File::open(path).expect(&format!("File {} not found", filename));
 
-    match file.read_to_end(&mut data) {
-        Ok(_) => Ok(Body::from(data)),
+    match File::open(path) {
+        Ok(mut file) => match file.read_to_end(&mut data) {
+            Ok(_) => Ok(Body::from(data)),
+            Err(error) => Err(error),
+        },
         Err(error) => Err(error),
     }
 }
