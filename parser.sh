@@ -69,9 +69,7 @@ jq \
         .[] |
         .profession
     ),
-    isSuccess: (
-        .success == 1
-    )
+    isSuccess: .success
 }
     ' "$PARSED_JSON_PATH" > "$PARSED_EVTC_FOLDER/data.json"
 
