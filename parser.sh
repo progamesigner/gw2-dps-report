@@ -28,6 +28,10 @@ mkdir -p "$OUTPUT_FILE_PATH"
 cp "$PARSED_HTML_PATH" "$OUTPUT_FILE_PATH/index.html"
 cp "$PARSED_JSON_PATH" "$OUTPUT_FILE_PATH/data.json"
 
+sed -i \
+    "s/<\/head>/<title>$(jq --raw-output '.targets[0].name' "$PARSED_JSON_PATH")<\/title><\/head>/" \
+    "$OUTPUT_FILE_PATH/index.html"
+
 # pass parser result for server
 jq \
     --compact-output \
