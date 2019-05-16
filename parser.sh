@@ -69,7 +69,7 @@ jq \
     recorderName: $recorder,
     recorderProfession: (
         .players |
-        map(select(.character == $recorder)) |
+        map(select(.name == $recorder)) |
         .[] |
         .profession
     ),

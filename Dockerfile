@@ -16,7 +16,7 @@ RUN rm ./target/release/deps/gw2* && \
 
 FROM alpine AS jq
 
-ENV JQ_VERSION=1.5
+ENV JQ_VERSION=1.6
 
 RUN apk update && \
     apk add --no-cache \
@@ -29,7 +29,7 @@ RUN apk update && \
 
 FROM alpine AS parser
 
-ARG ELITE_INSIGHTS_VERSION=2.9.0.0
+ARG ELITE_INSIGHTS_VERSION=2.11.0.0
 
 RUN apk update && \
     apk add --no-cache \
