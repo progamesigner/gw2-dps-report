@@ -103,7 +103,7 @@ dependencies = [
 
 [[package]]
 name = "gw2-dps-report"
-version = "0.5.3"
+version = "0.6.0"
 dependencies = [
  "futures 0.1.25 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper 0.12.18 (registry+https://github.com/rust-lang/crates.io-index)",
