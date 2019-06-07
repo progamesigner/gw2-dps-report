@@ -66,7 +66,7 @@
                             },
                             provider: {
                                 name: "Progamesigner's GW2 DPS Report",
-                                url: "https://arcdps.progamesigner.com"
+                                url: "https://github.com/progamesigner/gw2-dps-report"
                             },
                             timestamp: response.fightEnd,
                             title: 'DPS Report (' + response.fightName + ')',
