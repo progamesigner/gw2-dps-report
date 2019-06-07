@@ -81,4 +81,5 @@ jq \
 if [ -f "$PARSED_EVTC_FOLDER/data.json" -a -f "$OUTPUT_FILE_PATH/index.html" -a -f "$OUTPUT_FILE_PATH/data.json" ]; then
     exit 0
 fi
+
 exit 1
