@@ -1,7 +1,7 @@
 (function () {
     Dropzone.autoDiscover = false;
 
-    var token = document.querySelector('[name="token"]');
+    var token = document.querySelector('[name="token"]') || document.createElement('input');
     var webhook = document.querySelector('[name="webhook"]');
 
     try {
@@ -18,7 +18,7 @@
             }
         };
 
-        token.value = storage.getItem('token');
+        token.value = document.querySelector('[name="token"]') ? storage.getItem('token') : '';
         webhook.value = storage.getItem('discord_webhook');
         token.addEventListener('change', handler('token'));
         webhook.addEventListener('change', handler('discord_webhook'));
