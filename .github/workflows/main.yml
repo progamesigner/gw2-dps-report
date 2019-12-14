@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Publish to DockerHub (latest)
-      uses: HurricanKai/Publish-Docker-Github-Action@1.12.1
+      uses: HurricanKai/Publish-Docker-Github-Action@1.12.2
       with:
         name: ${{ github.repository }}
         username: ${{ secrets.DOCKER_USERNAME }}
@@ -23,7 +23,7 @@ jobs:
         snapshot: true
       if: "!contains(github.ref, 'refs/tags/v')"
     - name: Publish to DockerHub
-      uses: HurricanKai/Publish-Docker-Github-Action@1.12.1
+      uses: HurricanKai/Publish-Docker-Github-Action@1.12.2
       with:
         name: ${{ github.repository }}
         username: ${{ secrets.DOCKER_USERNAME }}
