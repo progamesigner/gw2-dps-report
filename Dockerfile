@@ -1,4 +1,4 @@
-FROM rust:1.31 AS server
+FROM rust:1.39 AS server
 
 RUN USER=root cargo new --bin --name gw2-dps-report /build
 
@@ -29,7 +29,7 @@ RUN apk update && \
 
 FROM alpine AS parser
 
-ARG ELITE_INSIGHTS_VERSION=2.16.1.0
+ARG ELITE_INSIGHTS_VERSION=2.19.2.0
 
 RUN apk update && \
     apk add --no-cache \
