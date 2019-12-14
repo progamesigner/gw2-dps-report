@@ -14,7 +14,7 @@ use std::io::{Error, Read, Write};
 use std::path::Path;
 use std::process::{Command, Stdio};
 
-type ResponseFuture = Box<Future<Item = Response<Body>, Error = hyper::Error> + Send>;
+type ResponseFuture = Box<dyn Future<Item = Response<Body>, Error = hyper::Error> + Send>;
 
 fn static_file_body(filename: &str) -> Result<Body, Error> {
     let path = format!(
