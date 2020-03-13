@@ -1,4 +1,4 @@
-FROM rust:1.39 AS server
+FROM rust:1.42 AS builder
 
 RUN USER=root cargo new --bin --name gw2-dps-report /build
 
@@ -55,8 +55,8 @@ WORKDIR /GW2EI
 
 COPY --from=jq /bin/jq /bin/jq
 COPY --from=parser /build /GW2EI
-COPY --from=server /build/target/release/gw2-dps-report /bin/gw2-dps-report
-COPY --from=server /build/target/release/clean /bin/gw2-dps-clean
+COPY --from=builder /build/target/release/gw2-dps-report /bin/gw2-dps-report
+COPY --from=builder /build/target/release/clean /bin/gw2-dps-clean
 COPY res/ /srv/gw2-dps-report/
 COPY settings.conf /GW2EI/settings.conf
 COPY parser.sh /bin/parser
