@@ -15,18 +15,20 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Publish to DockerHub (latest)
-      uses: HurricanKai/Publish-Docker-Github-Action@1.12.2
+      uses: docker/build-push-action@v1
       with:
-        name: ${{ github.repository }}
-        username: ${{ secrets.DOCKER_USERNAME }}
+        add_git_labels: true
         password: ${{ secrets.DOCKER_PASSWORD }}
-        snapshot: true
+        repository: ${{ github.repository }}
+        tags: latest
+        username: ${{ secrets.DOCKER_USERNAME }}
       if: "!contains(github.ref, 'refs/tags/v')"
     - name: Publish to DockerHub
-      uses: HurricanKai/Publish-Docker-Github-Action@1.12.2
+      uses: docker/build-push-action@v1
       with:
-        name: ${{ github.repository }}
-        username: ${{ secrets.DOCKER_USERNAME }}
+        add_git_labels: true
         password: ${{ secrets.DOCKER_PASSWORD }}
-        tagging: true
+        repository: ${{ github.repository }}
+        tag_with_ref: true
+        username: ${{ secrets.DOCKER_USERNAME }}
       if: "contains(github.ref, 'refs/tags/v')"
