@@ -47,8 +47,8 @@ jq \
     fightName: .fightName,
     fightStart: (
         try (
-            .timeStart |
-            strptime("%Y-%m-%d %H:%M:%S %Z") |
+            .timeStartStd |
+            strptime("%Y-%m-%d %H:%M:%S +00:00") |
             strftime("%Y-%m-%dT%H:%M:%S.000Z")
         ) catch (
             now |
@@ -57,8 +57,8 @@ jq \
     ),
     fightEnd: (
         try (
-            .timeEnd |
-            strptime("%Y-%m-%d %H:%M:%S %Z") |
+            .timeEndStd |
+            strptime("%Y-%m-%d %H:%M:%S +00:00") |
             strftime("%Y-%m-%dT%H:%M:%S.000Z")
         ) catch (
             now |
