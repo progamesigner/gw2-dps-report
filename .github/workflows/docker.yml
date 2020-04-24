@@ -13,7 +13,7 @@ jobs:
     name: Publish to DockerHub
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Publish to DockerHub (latest)
       uses: docker/build-push-action@v1
       with:
@@ -23,12 +23,16 @@ jobs:
         tags: latest
         username: ${{ secrets.DOCKER_USERNAME }}
       if: "!contains(github.ref, 'refs/tags/v')"
+    - name: Tag
+      run: |
+        echo "::set-env name=IMAGE_TAG::$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//g')"
+      if: "contains(github.ref, 'refs/tags/v')"
     - name: Publish to DockerHub
       uses: docker/build-push-action@v1
       with:
         add_git_labels: true
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: ${{ github.repository }}
-        tag_with_ref: true
+        tags: ${{ env.IMAGE_TAG }}
         username: ${{ secrets.DOCKER_USERNAME }}
       if: "contains(github.ref, 'refs/tags/v')"
