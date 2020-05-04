@@ -1,0 +1,145 @@
+# Changelog
+
+## [Unreleased]
+
+...
+
+## [0.8.10] - 2020-05-04
+### Changed
+- Update Elite Insights Parser to v2.23.0.0
+
+## [0.8.9] - 2020-04-24
+### Changed
+- Update to built with Rust v1.43.0
+
+## [0.8.8] - 2020-04-06
+### Changed
+- Update Elite Insights Parser to v2.22.0.0
+
+## [0.8.7] - 2020-03-12
+### Changed
+- Update Elite Insights Parser to v2.21.2.0
+
+## [0.8.6] - 2020-03-02
+### Changed
+- Update Elite Insights Parser to v2.21.1.0
+
+## [0.8.5] - 2020-02-14
+### Changed
+- Update Elite Insights Parser to v2.21.0.0
+
+## [0.8.4] - 2020-01-15
+### Changed
+- Update Elite Insights Parser to v2.20.1.0
+
+## [0.8.3] - 2020-01-06
+### Changed
+- Update Elite Insights Parser to v2.20.0.0
+
+## [0.8.2] - 2019-12-14
+### Fixed
+- Update `Publish-Docker-Github-Action` to fix automatic publishing with tags
+
+## [0.8.1] - 2019-12-14
+### Changed
+- Update notes on web page
+### Fixed
+- Fix GitHub Actions & publish to Docker Hub automatically
+
+## [0.8.0] - 2019-12-14
+### Changed
+- Update Elite Insights to v2.19.2.0
+
+## [0.7.0] - 2019-08-21
+### Changed
+- Update Elite Insights Parser to v2.16.1.0
+
+## [0.6.1] - 2019-06-08
+### Fixed
+- Fix parser permission
+
+## [0.6.0] - 2019-06-07
+### Changed
+- Update Elite Insights Parser to v2.12.0.0
+
+### Fixed
+- Fix generated error due to EI changed JSON output format
+
+## [0.5.3] - 2019-01-29
+### Changed
+- Update Elite Insights Parser to v2.6.0.0
+
+## [0.5.2] - 2019-01-11
+### Added
+- Add title to generated pages.
+
+## [0.5.1] - 2019-01-07
+### Changed
+- Update Elite Insights Parser to v2.4.0.0
+
+### Fixed
+- Fixed tip text (6a742f4)
+- Fix missed ico mime type (f05edfe)
+- Fix server crash when file not exists (4d68d1c)
+- Fix isSuccess field value as EI changed from int to bool recently (58d5fab)
+
+## [0.5.0] - 2018-12-21
+### Changed
+- Use LocalStorage to remember token and webhook for convenient
+- The prefix URL now a dropdown menu though current supports Discord only.
+
+## [0.4.0] - 2018-12-18
+### Added
+- Add new `clean` program to clean files generated 14 days ago
+
+### Changed
+- Update Elite Insights Parser to v2.2.0.0
+- Rework so that webhooks are issued via client instead of server
+- Open external links with new window
+- Add log location tip to page
+
+### Fixed
+- Fix unexpected server panics
+- Fix wrong mime type for plain text file
+
+## [0.3.0] - 2018-12-18
+### Added
+- New dropzone styles
+
+### Fixed
+- Fix unexpected server panics
+- Fix wrong mime type for plain text file
+
+## [0.2.0] - 2018-12-17
+### Added
+- Support serve static files
+
+### Changed
+- Make server as root project
+
+## [0.1.0] - 2018-12-17
+- Initial working prototype
+
+[Unreleased]: https://github.com/progamesigner/gw2-dps-report/compare/v0.8.10...HEAD
+[0.8.10]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.8.10
+[0.8.9]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.8.9
+[0.8.8]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.8.8
+[0.8.7]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.8.7
+[0.8.6]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.8.6
+[0.8.5]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.8.5
+[0.8.4]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.8.4
+[0.8.3]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.8.3
+[0.8.2]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.8.2
+[0.8.1]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.8.1
+[0.8.0]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.8.0
+[0.7.0]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.7.0
+[0.6.1]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.6.1
+[0.6.0]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.6.0
+[0.5.3]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.5.3
+[0.5.2]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.5.2
+[0.5.1]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.5.1
+[0.5.0]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.5.0
+[0.4.0]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.4.0
+[0.3.0]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.3.0
+[0.2.0]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.2.0
+[0.1.0]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.1.0
