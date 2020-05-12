@@ -56,7 +56,7 @@ LABEL org.opencontainers.image.description "Upload arcdps logs and send to Disco
 LABEL org.opencontainers.image.documentation "https://github.com/progamesigner/gw2-dps-report"
 LABEL org.opencontainers.image.title "progamesigner/gw2-dps-report"
 LABEL org.opencontainers.image.url "https://github.com/progamesigner/gw2-dps-report"
-LABEL org.opencontainers.image.version "0.8.7"
+LABEL org.opencontainers.image.version "0.8.11"
 
 WORKDIR /GW2EI
 

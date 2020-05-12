@@ -4,6 +4,10 @@
 
 ...
 
+## [0.8.11] - 2020-05-12
+### Changed
+- Update Elite Insights Parser to v2.23.1.0
+
 ## [0.8.10] - 2020-05-04
 ### Changed
 - Update Elite Insights Parser to v2.23.0.0
@@ -120,7 +124,8 @@
 ## [0.1.0] - 2018-12-17
 - Initial working prototype
 
-[Unreleased]: https://github.com/progamesigner/gw2-dps-report/compare/v0.8.10...HEAD
+[Unreleased]: https://github.com/progamesigner/gw2-dps-report/compare/v0.8.11...HEAD
+[0.8.11]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.8.11
 [0.8.10]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.8.10
 [0.8.9]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.8.9
 [0.8.8]: https://github.com/progamesigner/gw2-dps-report/releases/tag/v0.8.8
