@@ -23,10 +23,9 @@ Cargo would install dependencies, build debug executable, and the server is up.
 Deploy service with Docker.
 
 ```
-docker build -t gw2-dps-report .
 docker run -d \
-    -e UPLOAD_ACCESS_TOKEN=<YOUR_SECRET_TOKEN> \
-    gw2-dps-report
+   -e UPLOAD_ACCESS_TOKEN=<YOUR_SECRET_TOKEN> \
+   docker.pkg.github.com/progamesigner/gw2-dps-report/gw2-dps-report:latest
 ```
 
 Clean files generated 14 days ago.

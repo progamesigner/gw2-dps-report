@@ -1,4 +1,4 @@
-name: Build and publish to DockerHub
+name: Build and publish to GitHub Packages
 
 on:
   push:
@@ -10,29 +10,31 @@ on:
 
 jobs:
   build:
-    name: Publish to DockerHub
+    name: Publish to GitHub Packages
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Publish to DockerHub (latest)
+    - name: Publish to GitHub Packages (latest)
       uses: docker/build-push-action@v1
       with:
         add_git_labels: true
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: ${{ github.repository }}
+        password: ${{ github.token }}
+        registry: docker.pkg.github.com
+        repository: ${{ github.repository }}/gw2-dps-report
         tags: latest
-        username: ${{ secrets.DOCKER_USERNAME }}
+        username: ${{ github.actor }}
       if: "!contains(github.ref, 'refs/tags/v')"
     - name: Tag
       run: |
         echo "::set-env name=IMAGE_TAG::$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//g')"
       if: "contains(github.ref, 'refs/tags/v')"
-    - name: Publish to DockerHub
+    - name: Publish to GitHub Packages
       uses: docker/build-push-action@v1
       with:
         add_git_labels: true
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: ${{ github.repository }}
+        password: ${{ github.token }}
+        registry: docker.pkg.github.com
+        repository: ${{ github.repository }}/gw2-dps-report
         tags: ${{ env.IMAGE_TAG }}
-        username: ${{ secrets.DOCKER_USERNAME }}
+        username: ${{ github.actor }}
       if: "contains(github.ref, 'refs/tags/v')"
