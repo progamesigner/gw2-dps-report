@@ -29,7 +29,7 @@ RUN apk update && \
 
 FROM alpine AS parser
 
-ARG ELITE_INSIGHTS_VERSION=2.27.0.0
+ARG ELITE_INSIGHTS_VERSION=2.28.0.0
 
 RUN apk update && \
     apk add --no-cache \
@@ -56,7 +56,7 @@ LABEL org.opencontainers.image.description "Upload arcdps logs and send to Disco
 LABEL org.opencontainers.image.documentation "https://github.com/progamesigner/gw2-dps-report"
 LABEL org.opencontainers.image.title "progamesigner/gw2-dps-report"
 LABEL org.opencontainers.image.url "https://github.com/progamesigner/gw2-dps-report"
-LABEL org.opencontainers.image.version "0.8.11"
+LABEL org.opencontainers.image.version "0.8.16"
 
 WORKDIR /GW2EI
 
