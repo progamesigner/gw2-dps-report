@@ -26,7 +26,7 @@ jobs:
       if: "!contains(github.ref, 'refs/tags/v')"
     - name: Tag
       run: |
-        echo "::set-env name=IMAGE_TAG::$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//g')"
+        echo "IMAGE_TAG=$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//g')" >> $GITHUB_ENV
       if: "contains(github.ref, 'refs/tags/v')"
     - name: Publish to GitHub Packages
       uses: docker/build-push-action@v1
