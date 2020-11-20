@@ -14,27 +14,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Publish to GitHub Packages (latest)
-      uses: docker/build-push-action@v1
+    - run: |
+        echo "IMAGE_CREATED=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
+    - name: Login to GitHub Packages (latest)
+      uses: docker/login-action@v1
       with:
-        add_git_labels: true
         password: ${{ github.token }}
         registry: docker.pkg.github.com
-        repository: ${{ github.repository }}/gw2-dps-report
-        tags: latest
         username: ${{ github.actor }}
+    - name: Publish to GitHub Packages (latest)
+      uses: docker/build-push-action@v2
+      with:
+        labels: |
+          org.opencontainers.image.created=${{ env.IMAGE_CREATED }}
+          org.opencontainers.image.revision=${{ github.sha }}
+          org.opencontainers.image.source=${{ github.event.repository.html_url }}
+        tags: latest
       if: "!contains(github.ref, 'refs/tags/v')"
-    - name: Tag
-      run: |
+    - run: |
         echo "IMAGE_TAG=$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//g')" >> $GITHUB_ENV
       if: "contains(github.ref, 'refs/tags/v')"
     - name: Publish to GitHub Packages
-      uses: docker/build-push-action@v1
+      uses: docker/build-push-action@v2
       with:
-        add_git_labels: true
-        password: ${{ github.token }}
-        registry: docker.pkg.github.com
-        repository: ${{ github.repository }}/gw2-dps-report
+        labels: |
+          org.opencontainers.image.created=${{ env.IMAGE_CREATED }}
+          org.opencontainers.image.revision=${{ github.sha }}
+          org.opencontainers.image.source=${{ github.event.repository.html_url }}
         tags: ${{ env.IMAGE_TAG }}
-        username: ${{ github.actor }}
       if: "contains(github.ref, 'refs/tags/v')"
