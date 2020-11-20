@@ -13,33 +13,40 @@ jobs:
     name: Publish to GitHub Packages
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - run: |
-        echo "IMAGE_CREATED=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Prepare
+      run: |
+        IMAGE=docker.pkg.github.com/${{ github.repository }}/gw2-dps-report
+        VERSION=latest
+        if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+          VERSION=$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//g')
+        elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
+          VERSION=$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\///g')
+        elif [[ "${{ github.ref }}" == refs/heads/* ]]; then
+          VERSION=$(echo ${{ github.ref }} | sed -e 's/^refs\/heads\///g' | sed -r 's#/+#-#g')
+        elif [[ "${{ github.ref }}" == refs/pull/* ]]; then
+          VERSION=pr-${{ github.event.number }}
+        fi
+        TAGS=${IMAGE}:${VERSION}
+        if [[ "${{ github.event.name }}" == push ]]; then
+          TAGS=$TAGS,${IMAGE}:sha-$(echo ${{ github.sha }} | sed 's/^\(.\{6\}\).*/\1/g')
+        fi
+        echo IMAGE_CREATED=$(date -u +'%Y-%m-%dT%H:%M:%SZ') >> $GITHUB_ENV
+        echo IMAGE_TAGS=${TAGS} >> $GITHUB_ENV
+        echo IMAGE_VERSION=${VERSION} >> $GITHUB_ENV
     - name: Login to GitHub Packages (latest)
       uses: docker/login-action@v1
       with:
         password: ${{ github.token }}
         registry: docker.pkg.github.com
         username: ${{ github.actor }}
-    - name: Publish to GitHub Packages (latest)
+    - name: Build & publish to GitHub Packages
       uses: docker/build-push-action@v2
       with:
         labels: |
           org.opencontainers.image.created=${{ env.IMAGE_CREATED }}
           org.opencontainers.image.revision=${{ github.sha }}
           org.opencontainers.image.source=${{ github.event.repository.html_url }}
-        tags: latest
-      if: "!contains(github.ref, 'refs/tags/v')"
-    - run: |
-        echo "IMAGE_TAG=$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//g')" >> $GITHUB_ENV
-      if: "contains(github.ref, 'refs/tags/v')"
-    - name: Publish to GitHub Packages
-      uses: docker/build-push-action@v2
-      with:
-        labels: |
-          org.opencontainers.image.created=${{ env.IMAGE_CREATED }}
-          org.opencontainers.image.revision=${{ github.sha }}
-          org.opencontainers.image.source=${{ github.event.repository.html_url }}
-        tags: ${{ env.IMAGE_TAG }}
-      if: "contains(github.ref, 'refs/tags/v')"
+          org.opencontainers.image.version=${{ env.IMAGE_VERSION }}
+        tags: ${{ env.IMAGE_TAGS }}
