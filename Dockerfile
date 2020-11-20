@@ -53,10 +53,6 @@ ENV SERVER_LISTEN_PORT=80
 
 LABEL org.opencontainers.image.authors "Yang Sheng Han <https://progamesigner.com>"
 LABEL org.opencontainers.image.description "Upload arcdps logs and send to Discord automatically."
-LABEL org.opencontainers.image.documentation "https://github.com/progamesigner/gw2-dps-report"
-LABEL org.opencontainers.image.title "progamesigner/gw2-dps-report"
-LABEL org.opencontainers.image.url "https://github.com/progamesigner/gw2-dps-report"
-LABEL org.opencontainers.image.version "0.8.16"
 
 WORKDIR /GW2EI
 

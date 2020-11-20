@@ -21,10 +21,6 @@ jobs:
         VERSION=latest
         if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
           VERSION=$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//g')
-        elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
-          VERSION=$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\///g')
-        elif [[ "${{ github.ref }}" == refs/heads/* ]]; then
-          VERSION=$(echo ${{ github.ref }} | sed -e 's/^refs\/heads\///g' | sed -r 's#/+#-#g')
         elif [[ "${{ github.ref }}" == refs/pull/* ]]; then
           VERSION=pr-${{ github.event.number }}
         fi
@@ -46,7 +42,11 @@ jobs:
       with:
         labels: |
           org.opencontainers.image.created=${{ env.IMAGE_CREATED }}
+          org.opencontainers.image.documentation=${{ github.event.repository.html_url }}
           org.opencontainers.image.revision=${{ github.sha }}
           org.opencontainers.image.source=${{ github.event.repository.html_url }}
+          org.opencontainers.image.title=${{ github.repository }}
+          org.opencontainers.image.url=${{ github.event.repository.html_url }}
           org.opencontainers.image.version=${{ env.IMAGE_VERSION }}
+        push: true
         tags: ${{ env.IMAGE_TAGS }}
