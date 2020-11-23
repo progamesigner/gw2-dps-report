@@ -13,34 +13,30 @@ jobs:
     name: Publish to GitHub Packages
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Prepare
-      run: |
-        IMAGE=docker.pkg.github.com/${{ github.repository }}/gw2-dps-report
-        VERSION=latest
+    - uses: actions/checkout@v2
+    - run: |
+        IMAGE=ghcr.io/${{ github.repository }}
+        TAGS=""
         if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
-          VERSION=$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//g')
+          TAGS=${IMAGE}:$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//g')
         elif [[ "${{ github.ref }}" == refs/pull/* ]]; then
-          VERSION=pr-${{ github.event.number }}
+          TAGS=${IMAGE}:pr-${{ github.event.number }}
+        else
+          TAGS=${IMAGE}:latest
         fi
-        TAGS=${IMAGE}:${VERSION}
         if [[ "${{ github.event.name }}" == push ]]; then
-          TAGS=$TAGS,${IMAGE}:sha-$(echo ${{ github.sha }} | sed 's/^\(.\{6\}\).*/\1/g')
+          TAGS=${TAGS},${IMAGE}:sha-$(echo ${{ github.sha }} | sed 's/^\(.\{6\}\).*/\1/g')
         fi
         echo IMAGE_CREATED=$(date -u +'%Y-%m-%dT%H:%M:%SZ') >> $GITHUB_ENV
         echo IMAGE_TAGS=${TAGS} >> $GITHUB_ENV
         echo IMAGE_VERSION=${VERSION} >> $GITHUB_ENV
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-    - name: Login to GitHub Packages (latest)
-      uses: docker/login-action@v1
+    - uses: docker/setup-buildx-action@v1
+    - uses: docker/login-action@v1
       with:
-        password: ${{ github.token }}
-        registry: docker.pkg.github.com
-        username: ${{ github.actor }}
-    - name: Build & publish to GitHub Packages
-      uses: docker/build-push-action@v2
+        password: ${{ secrets.REGISTRY_TOKEN }}
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+    - uses: docker/build-push-action@v2
       with:
         labels: |
           org.opencontainers.image.created=${{ env.IMAGE_CREATED }}
