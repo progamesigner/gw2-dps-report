@@ -10,20 +10,20 @@ on:
 
 jobs:
   build:
-    name: Publish to GitHub Packages
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - run: |
         IMAGE=ghcr.io/${{ github.repository }}
-        TAGS=""
+        VERSION=""
         if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
-          TAGS=${IMAGE}:$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//g')
+          VERSION=$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//g')
         elif [[ "${{ github.ref }}" == refs/pull/* ]]; then
-          TAGS=${IMAGE}:pr-${{ github.event.number }}
+          VERSION=pr-${{ github.event.number }}
         else
-          TAGS=${IMAGE}:latest
+          VERSION=latest
         fi
+        TAGS=${IMAGE}:${VERSION}
         if [[ "${{ github.event.name }}" == push ]]; then
           TAGS=${TAGS},${IMAGE}:sha-$(echo ${{ github.sha }} | sed 's/^\(.\{6\}\).*/\1/g')
         fi
@@ -39,12 +39,15 @@ jobs:
     - uses: docker/build-push-action@v2
       with:
         labels: |
+          org.opencontainers.image.authors=Yang Sheng Han <https://progamesigner.com>
           org.opencontainers.image.created=${{ env.IMAGE_CREATED }}
+          org.opencontainers.image.description=Upload arcdps logs and send to Discord automatically.
           org.opencontainers.image.documentation=${{ github.event.repository.html_url }}
           org.opencontainers.image.revision=${{ github.sha }}
           org.opencontainers.image.source=${{ github.event.repository.html_url }}
           org.opencontainers.image.title=${{ github.repository }}
           org.opencontainers.image.url=${{ github.event.repository.html_url }}
+          org.opencontainers.image.vendor=https://github.com/${{ github.repository_owner }}
           org.opencontainers.image.version=${{ env.IMAGE_VERSION }}
         push: true
         tags: ${{ env.IMAGE_TAGS }}

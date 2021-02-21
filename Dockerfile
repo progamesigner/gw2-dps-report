@@ -51,9 +51,6 @@ ENV SERVER_FILE_PATH=/srv/gw2-dps-report
 ENV SERVER_LISTEN_ADDR=0.0.0.0
 ENV SERVER_LISTEN_PORT=80
 
-LABEL org.opencontainers.image.authors "Yang Sheng Han <https://progamesigner.com>"
-LABEL org.opencontainers.image.description "Upload arcdps logs and send to Discord automatically."
-
 WORKDIR /GW2EI
 
 COPY --from=jq /bin/jq /bin/jq
