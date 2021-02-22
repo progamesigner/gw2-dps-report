@@ -23,8 +23,8 @@ jobs:
         else
           VERSION=latest
         fi
-        TAGS=${IMAGE}:${VERSION}
-        if [[ "${{ github.event.name }}" == push ]]; then
+        TAGS=${IMAGE}:${VERSION},${IMAGE}:${{ github.sha }}
+        if [[ "${{ github.event_name }}" == push ]]; then
           TAGS=${TAGS},${IMAGE}:sha-$(echo ${{ github.sha }} | sed 's/^\(.\{6\}\).*/\1/g')
         fi
         echo IMAGE_CREATED=$(date -u +'%Y-%m-%dT%H:%M:%SZ') >> $GITHUB_ENV
