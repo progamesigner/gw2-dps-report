@@ -4,6 +4,10 @@
 
 ...
 
+## [0.8.22] - 2021-02-24
+### Changed
+- Allow crawlers
+
 ## [0.8.21] - 2021-01-27
 ### Changed
 - Update Elite Insights Parser to v2.31.0.0
