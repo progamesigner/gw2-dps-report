@@ -29,7 +29,7 @@ RUN apk update && \
 
 FROM alpine AS parser
 
-ARG ELITE_INSIGHTS_VERSION=v2.35.4.0
+ARG ELITE_INSIGHTS_VERSION=v2.36.0.0
 
 RUN apk update && \
     apk add --no-cache \
