@@ -121,7 +121,7 @@ dependencies = [
 
 [[package]]
 name = "gw2-dps-report"
-version = "0.8.37"
+version = "0.8.38"
 dependencies = [
  "futures",
  "hyper",
