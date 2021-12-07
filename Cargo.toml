@@ -1,6 +1,6 @@
 [package]
 name = "gw2-dps-report"
-version = "0.8.41"
+version = "0.8.42"
 authors = ["Yang Sheng Han <progamesigner@gmail.com>"]
 
 [dependencies]
