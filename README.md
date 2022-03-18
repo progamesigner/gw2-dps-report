@@ -48,3 +48,5 @@ docker exec gw2-dps-report gw2-dps-clean
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
+![Repobeats Analytics](https://repobeats.axiom.co/api/embed/5fb08d2b886719c3014928b8c9d422f75510cf8b.svg "Repobeats Analytics")
