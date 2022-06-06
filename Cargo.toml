@@ -5,5 +5,5 @@ authors = ["Yang Sheng Han <progamesigner@gmail.com>"]
 
 [dependencies]
 futures = "0.1"
-hyper = "0.12"
+hyper = "0.14"
 mktemp = "0.3.1"
