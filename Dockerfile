@@ -1,4 +1,4 @@
-FROM rust:1.43 AS builder
+FROM rust:1.61 AS builder
 
 RUN USER=root cargo new --bin --name gw2-dps-report /build
 
