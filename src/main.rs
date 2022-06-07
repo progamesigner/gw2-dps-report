@@ -1,20 +1,14 @@
-extern crate futures;
-extern crate hyper;
-extern crate mktemp;
-
-use futures::future;
+use hyper::body::HttpBody;
 use hyper::header::HeaderValue;
-use hyper::rt::{self, Future, Stream};
-use hyper::service::service_fn;
-use hyper::{Body, Method, Request, Response, Server, StatusCode};
+use hyper::service::{make_service_fn, service_fn};
+use hyper::{self, Body, Method, Request, Response, Server, StatusCode};
 use mktemp::Temp;
 use std::env;
 use std::fs::{self, File};
 use std::io::{Error, Read, Write};
 use std::path::Path;
 use std::process::{Command, Stdio};
-
-type ResponseFuture = Box<dyn Future<Item = Response<Body>, Error = hyper::Error> + Send>;
+use tokio::runtime::Runtime;
 
 fn static_file_body(filename: &str) -> Result<Body, Error> {
     let path = format!(
@@ -76,20 +70,18 @@ fn response_server_error(message: &str) -> Response<Body> {
         .unwrap()
 }
 
-fn index(_: Request<Body>) -> ResponseFuture {
+fn index(_: Request<Body>) -> Response<Body> {
     match static_file_body("index.html") {
-        Ok(body) => Box::new(future::ok(
-            Response::builder()
-                .header("Content-Type", "text/html")
-                .body(body)
-                .unwrap(),
-        )),
-        Err(_) => Box::new(future::ok(response_not_found())),
+        Ok(body) => Response::builder()
+            .header("Content-Type", "text/html")
+            .body(body)
+            .unwrap(),
+        Err(_) => response_not_found(),
     }
 }
 
-fn upload(request: Request<Body>) -> ResponseFuture {
-    let (parts, body) = request.into_parts();
+async fn upload(request: Request<Body>) -> Response<Body> {
+    let (parts, mut evtc) = request.into_parts();
 
     let empty = HeaderValue::from_static("");
     let token = env::var("UPLOAD_ACCESS_TOKEN").unwrap_or("".to_string());
@@ -102,113 +94,105 @@ fn upload(request: Request<Body>) -> ResponseFuture {
             .to_str()
             .unwrap()
     {
-        Box::new(
-            body.concat2()
-                .map(move |evtc| match parts.headers.get("X-EVTC-FILENAME") {
-                    Some(filename) => {
-                        let name = filename.to_str().unwrap();
-                        let temp = Temp::new_dir().expect("Failed to create temporary directory");
-                        let path = format!("{}/{}", temp.to_path_buf().to_str().unwrap(), name);
+        match parts.headers.get("X-EVTC-FILENAME") {
+            Some(filename) => {
+                let name = filename.to_str().unwrap();
+                let temp = Temp::new_dir().expect("Failed to create temporary directory");
+                let path = format!("{}/{}", temp.to_path_buf().to_str().unwrap(), name);
 
-                        let mut file = File::create(path.clone()).unwrap();
-                        let mut command = Command::new(
-                            fs::canonicalize(
-                                env::var("EVTC_PARSER_PATH").unwrap_or("/bin/parser".to_string()),
-                            )
-                            .unwrap(),
-                        );
+                let mut file = File::create(path.clone()).unwrap();
+                let mut command = Command::new(
+                    fs::canonicalize(
+                        env::var("EVTC_PARSER_PATH").unwrap_or("/bin/parser".to_string()),
+                    )
+                    .unwrap(),
+                );
 
-                        command
-                            .arg(path.clone())
-                            .arg(name)
-                            .stdout(Stdio::inherit())
-                            .stderr(Stdio::inherit());
+                command
+                    .arg(path.clone())
+                    .arg(name)
+                    .stdout(Stdio::inherit())
+                    .stderr(Stdio::inherit());
 
-                        file.write_all(&evtc)
-                            .expect("Failed to write temporary file");
-                        file.sync_all().expect("Failed to sync temporary file");
+                file.write_all(evtc.data().await.unwrap().unwrap().as_ref())
+                    .expect("Failed to write temporary file");
+                file.sync_all().expect("Failed to sync temporary file");
 
-                        if command
-                            .spawn()
-                            .expect("Failed to execute parser")
-                            .wait()
-                            .expect("Failed to determine parser exit status")
-                            .success()
-                        {
-                            let path =
-                                format!("{}/data.json", temp.to_path_buf().to_str().unwrap());
+                if command
+                    .spawn()
+                    .expect("Failed to execute parser")
+                    .wait()
+                    .expect("Failed to determine parser exit status")
+                    .success()
+                {
+                    let path = format!("{}/data.json", temp.to_path_buf().to_str().unwrap());
 
-                            let mut data = Vec::new();
+                    let mut data = Vec::new();
 
-                            match File::open(path) {
-                                Ok(mut file) => match file.read_to_end(&mut data) {
-                                    Ok(_) => Response::builder()
-                                        .header("Content-Type", "application/json")
-                                        .body(Body::from(data))
-                                        .unwrap(),
-                                    Err(_) => response_server_error("Unexpected parsing error"),
-                                },
-                                Err(_) => response_server_error("Empty result"),
-                            }
-                        } else {
-                            response_server_error("Parser error")
-                        }
+                    match File::open(path) {
+                        Ok(mut file) => match file.read_to_end(&mut data) {
+                            Ok(_) => Response::builder()
+                                .header("Content-Type", "application/json")
+                                .body(Body::from(data))
+                                .unwrap(),
+                            Err(_) => response_server_error("Unexpected parsing error"),
+                        },
+                        Err(_) => response_server_error("Empty result"),
                     }
-                    None => response_server_error("X-EVTC-FILENAME header is required"),
-                }),
-        )
+                } else {
+                    response_server_error("Parser error")
+                }
+            }
+            None => response_server_error("X-EVTC-FILENAME header is required"),
+        }
     } else {
-        Box::new(future::ok(response_not_authorized()))
+        response_not_authorized()
     }
 }
 
-fn cors(_: Request<Body>) -> ResponseFuture {
-    Box::new(future::ok(Response::builder().body(Body::empty()).unwrap()))
+fn cors(_: Request<Body>) -> Response<Body> {
+    Response::builder().body(Body::empty()).unwrap()
 }
 
-fn serve(request: Request<Body>) -> ResponseFuture {
+fn serve(request: Request<Body>) -> Response<Body> {
     let path = Path::new(&request.uri().path()[1..]);
 
     match evtc_file_body(path.to_str().unwrap()) {
-        Ok(body) => Box::new(future::ok(
-            Response::builder()
-                .header("Content-Type", "text/html")
-                .body(body)
-                .unwrap(),
-        )),
+        Ok(body) => Response::builder()
+            .header("Content-Type", "text/html")
+            .body(body)
+            .unwrap(),
         Err(_) => match static_file_body(path.to_str().unwrap()) {
-            Ok(body) => Box::new(future::ok(
-                Response::builder()
-                    .header(
-                        "Content-Type",
-                        match path.extension() {
-                            Some(extension) => match extension.to_str() {
-                                Some("css") => "text/css",
-                                Some("html") => "text/html",
-                                Some("ico") => "image/x-icon",
-                                Some("js") => "text/javascript",
-                                Some("json") => "application/json",
-                                Some("png") => "image/png",
-                                Some("svg") => "image/svg+xml",
-                                _ => "text/plain",
-                            },
+            Ok(body) => Response::builder()
+                .header(
+                    "Content-Type",
+                    match path.extension() {
+                        Some(extension) => match extension.to_str() {
+                            Some("css") => "text/css",
+                            Some("html") => "text/html",
+                            Some("ico") => "image/x-icon",
+                            Some("js") => "text/javascript",
+                            Some("json") => "application/json",
+                            Some("png") => "image/png",
+                            Some("svg") => "image/svg+xml",
                             _ => "text/plain",
                         },
-                    )
-                    .body(body)
-                    .unwrap(),
-            )),
-            Err(_) => Box::new(future::ok(response_not_found())),
+                        _ => "text/plain",
+                    },
+                )
+                .body(body)
+                .unwrap(),
+            Err(_) => response_not_found(),
         },
     }
 }
 
-fn dispatcher(request: Request<Body>) -> ResponseFuture {
+async fn dispatcher(request: Request<Body>) -> Result<Response<Body>, hyper::Error> {
     match (request.method(), request.uri().path()) {
-        (&Method::GET, "/") | (&Method::GET, "/index.html") => index(request),
-        (&Method::PUT, "/upload") => upload(request),
-        (&Method::OPTIONS, "/upload") => cors(request),
-        _ => serve(request),
+        (&Method::GET, "/") | (&Method::GET, "/index.html") => Ok(index(request)),
+        (&Method::PUT, "/upload") => Ok(upload(request).await),
+        (&Method::OPTIONS, "/upload") => Ok(cors(request)),
+        _ => Ok(serve(request)),
     }
 }
 
@@ -221,11 +205,15 @@ fn main() {
     .parse()
     .unwrap();
 
-    let server = Server::bind(&addr)
-        .serve(|| service_fn(dispatcher))
-        .map_err(|err| eprintln!("Server error: {}", err));
+    let serve = make_service_fn(|_conn| async { Ok::<_, hyper::Error>(service_fn(dispatcher)) });
+
+    let server = Server::bind(&addr).serve(serve);
 
     println!("Listening on http://{}", addr);
 
-    rt::run(server);
+    Runtime::new().unwrap().block_on(async {
+        if let Err(err) = server.await {
+            eprintln!("Server error: {}", err);
+        }
+    })
 }
