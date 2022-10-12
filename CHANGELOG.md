@@ -4,7 +4,7 @@
 
 ...
 
-## [0.8.58] - 2022-10-12
+## [0.8.59] - 2022-10-12
 ### Changed
 - Update Elite Insights Parser to v2.47.0.0
 
