@@ -1,6 +1,6 @@
 [package]
 name = "gw2-dps-report"
-version = "0.8.70"
+version = "0.8.71"
 authors = ["Yang Sheng Han <progamesigner@gmail.com>"]
 edition = "2021"
 
