@@ -4,6 +4,11 @@
 
 ...
 
+## [0.8.83] - 2023-10-11
+### Changed
+- Update Rust to v1.73
+- Update Elite Insights Parser to v2.58.3.0
+
 ## [0.8.82] - 2023-09-26
 ### Changed
 - Update Elite Insights Parser to v2.58.2.0
