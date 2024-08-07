@@ -78,7 +78,7 @@ dependencies = [
 
 [[package]]
 name = "gw2-dps-report"
-version = "0.8.110"
+version = "0.8.111"
 dependencies = [
  "hyper",
  "mktemp",
