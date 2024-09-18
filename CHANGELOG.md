@@ -4,6 +4,10 @@
 
 ...
 
+## [0.8.114] - 2024-09-18
+### Changed
+- Update Elite Insights Parser to v2.73.2.0
+
 ## [0.8.113] - 2024-09-05
 ### Changed
 - Update Elite Insights Parser to v2.73.1.0
