@@ -10,7 +10,7 @@ EVTC_FILE_NAME="$2"
 PARSED_EVTC_FOLDER="$(dirname "$EVTC_FILE_PATH")"
 
 # parse evtc file with GW2EI
-mono GuildWars2EliteInsights.exe -p -c settings.conf "$EVTC_FILE_PATH"
+mono GuildWars2EliteInsights-CLI.exe -c settings.conf "$EVTC_FILE_PATH"
 
 # find generated file paths
 for path in $PARSED_EVTC_FOLDER/*; do

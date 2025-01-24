@@ -29,7 +29,7 @@ RUN apk update && \
 
 FROM alpine AS parser
 
-ARG ELITE_INSIGHTS_VERSION=v.2.73.3.1
+ARG ELITE_INSIGHTS_VERSION=v3.0.0.0
 
 RUN apk update && \
     apk add --no-cache \
@@ -39,9 +39,9 @@ RUN apk update && \
 
 WORKDIR /build
 
-RUN curl -o ./GW2EI.zip -L https://github.com/baaron4/GW2-Elite-Insights-Parser/releases/download/${ELITE_INSIGHTS_VERSION}/GW2EI.zip && \
-    unzip ./GW2EI.zip && \
-    rm -rf ./GW2EI.zip
+RUN curl -o ./GW2EI.zip -L https://github.com/baaron4/GW2-Elite-Insights-Parser/releases/download/${ELITE_INSIGHTS_VERSION}/GW2EICLI.zip && \
+    unzip ./GW2EICLI.zip && \
+    rm -rf ./GW2EICLI.zip
 
 FROM mono:5
 
