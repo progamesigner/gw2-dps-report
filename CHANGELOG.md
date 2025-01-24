@@ -4,6 +4,10 @@
 
 ...
 
+## [0.9.7] - 2025-01-24
+### Changed
+- Fix building images
+
 ## [0.9.6] - 2025-01-24
 ### Changed
 - Update Elite Insights Parser to v3.3.0.1

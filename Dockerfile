@@ -39,7 +39,7 @@ RUN apk update && \
 
 WORKDIR /build
 
-RUN curl -o ./GW2EI.zip -L https://github.com/baaron4/GW2-Elite-Insights-Parser/releases/download/${ELITE_INSIGHTS_VERSION}/GW2EICLI.zip && \
+RUN curl -o ./GW2EICLI.zip -L https://github.com/baaron4/GW2-Elite-Insights-Parser/releases/download/${ELITE_INSIGHTS_VERSION}/GW2EICLI.zip && \
     unzip ./GW2EICLI.zip && \
     rm -rf ./GW2EICLI.zip
 
